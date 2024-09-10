@@ -3,3 +3,4 @@
 .idea/
 /logs/folder_*
 .env
+.mailmap
