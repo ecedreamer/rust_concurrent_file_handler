@@ -1,4 +1,5 @@
-use std::fmt::format;
+use std::fs::{create_dir_all, read_dir, File};
+use std::io::{Read, Write};
 use std::path::Path;
 use clap::Parser;
 use chrono::{NaiveDate, Duration};
@@ -40,6 +41,40 @@ fn get_full_path(folder_name: &str, date: &str) -> String {
 
 fn export_folder_files(folder_path: &str) -> Result<String, String> {
 
+
+
+    let output_folder = format!("logs/exported/{}", folder_path);
+    if !Path::new(&output_folder).exists() {
+        create_dir_all(&output_folder).unwrap();
+        println!("Created folder: {}", &output_folder);
+    }
+    let output_file = format!("logs/exported/{}/{}", folder_path, "raw_log.txt");
+
+
+
+    let mut output = File::create(output_file).expect("Could not create output file");
+
+    let entries = read_dir(folder_path).unwrap();
+
+    for entry in entries {
+        let entry = entry.unwrap();
+        let path = entry.path();
+        if path.is_file() {
+            println!("{:?} **************", path);
+
+            let mut input_file = File::open(&path).unwrap();
+            let mut buffer = [0; 12288];
+
+            loop {
+                let bytes_read = input_file.read(&mut buffer).unwrap();
+
+                if bytes_read == 0 {
+                    break;
+                }
+                output.write_all(&buffer[..bytes_read]).unwrap();
+            }
+        }
+    }
     Ok(format!("Exported to {}", "logs/exported").to_string())
 }
 
@@ -50,6 +85,7 @@ fn check_export_files(folder_name: &str, start_date: &str, end_date: &str) {
         let path = get_full_path(folder_name, folder);
         if Path::new(&path).exists() {
             println!("Path exists: {}", path);
+            let _ = export_folder_files(&path);
         } else {
             println!("Path does not exists: {}", path);
         }

@@ -1,6 +1,6 @@
-/target
+target/
 .DS_Store
 .idea/
-/logs/folder_*
+logs/folder_*
 .env
-.mailmap
+logs/exported
