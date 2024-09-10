@@ -1,3 +1,4 @@
+use std::fmt::format;
 use std::path::Path;
 use clap::Parser;
 use chrono::{NaiveDate, Duration};
@@ -37,10 +38,14 @@ fn get_full_path(folder_name: &str, date: &str) -> String {
     full_path
 }
 
+fn export_folder_files(folder_path: &str) -> Result<String, String> {
 
-fn export_files(folder_name: &str, start_date: &str, end_date: &str) {
+    Ok(format!("Exported to {}", "logs/exported").to_string())
+}
+
+
+fn check_export_files(folder_name: &str, start_date: &str, end_date: &str) {
     let all_possible_folders = get_date_ranges(start_date, end_date);
-    println!("{:?}", all_possible_folders);
     for folder in all_possible_folders.iter() {
         let path = get_full_path(folder_name, folder);
         if Path::new(&path).exists() {
@@ -85,7 +90,7 @@ fn main() {
         Ok(msg) => {
             let folders: Vec<String> = folder_names.split(",").map(|s| s.trim().to_string()).collect();
             for folder in folders.iter() {
-                export_files(&folder, &start_date, &end_date);
+                check_export_files(&folder, &start_date, &end_date);
             }
         },
         Err(e) => println!("Error: {}", e)
