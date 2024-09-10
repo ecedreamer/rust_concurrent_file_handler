@@ -22,13 +22,14 @@ def generate_log_files():
                 base_month_dir.mkdir(parents=False, exist_ok=True)
                 for day in BASE_DAYS:
                     base_day_dir = Path(base_month_dir / day)
-                    base_day_dir.mkdir(parents=False, exist_ok=True)
                     date_str = f"{year}-{month}-{day} 09:00:00"
                     date_format = '%Y-%m-%d %H:%M:%S'
                     try:
                         date_time_obj = datetime.strptime(date_str, date_format)
+
                     except:
                         continue
+                    base_day_dir.mkdir(parents=False, exist_ok=True)
                     timestamp = int(date_time_obj.timestamp())
                     for _ in range(20):
                         file_name = f"{folder}/{year}/{month}/{day}/{timestamp}_file"
